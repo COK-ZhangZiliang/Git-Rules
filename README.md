@@ -32,16 +32,16 @@ Write `<topic>` in short, descriptive English kebab-case, for example
 Before committing, make sure the local Git author identity is configured:
 
 ```bash
-git config user.name
-git config user.email
+git config --local user.name
+git config --local user.email
 ```
 
 If the local repository does not have `user.name` or `user.email` configured,
 use the repository-local fallback identity:
 
 ```bash
-git config user.name "ziliang"
-git config user.email "ziliangzhangcok@gmail.com"
+git config --local user.name "ziliang"
+git config --local user.email "ziliangzhangcok@gmail.com"
 ```
 
 Prefer repository-local configuration for this fallback. Do not change global
@@ -178,8 +178,8 @@ request.
 ```bash
 git status --short
 git diff
-git config user.name || git config user.name "ziliang"
-git config user.email || git config user.email "ziliangzhangcok@gmail.com"
+git config --local user.name || git config --local user.name "ziliang"
+git config --local user.email || git config --local user.email "ziliangzhangcok@gmail.com"
 git add <explicit-path>
 git diff --cached
 git commit -m "docs: add git commit rules"

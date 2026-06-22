@@ -27,6 +27,26 @@ Use clear topic branches such as:
 Write `<topic>` in short, descriptive English kebab-case, for example
 `codex/git-rules` or `fix/login-timeout`.
 
+## Author Identity
+
+Before committing, make sure the local Git author identity is configured:
+
+```bash
+git config user.name
+git config user.email
+```
+
+If the local repository does not have `user.name` or `user.email` configured,
+use the repository-local fallback identity:
+
+```bash
+git config user.name "ziliang"
+git config user.email "ziliangzhangcok@gmail.com"
+```
+
+Prefer repository-local configuration for this fallback. Do not change global
+Git identity unless explicitly asked.
+
 ## Commit Message Format
 
 Use Conventional Commits:
@@ -158,6 +178,8 @@ request.
 ```bash
 git status --short
 git diff
+git config user.name || git config user.name "ziliang"
+git config user.email || git config user.email "ziliangzhangcok@gmail.com"
 git add <explicit-path>
 git diff --cached
 git commit -m "docs: add git commit rules"

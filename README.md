@@ -1,36 +1,41 @@
-# Git 提交规则
+# Git Commit Rules
 
-本文档定义本仓库推荐的分支、提交、暂存、验证、推送和 Pull Request 规则。
+This document defines the recommended branch, commit, staging, verification,
+push, and pull request rules for this repository.
 
-## 基本原则
+## Core Principles
 
-- 只有在用户或维护者明确要求时才创建提交；不要在完成修改后自动提交。
-- 每个提交只表达一个逻辑上独立、可测试的变更。
-- 不要把无关的功能、修复、重构、测试或文档改动混在同一个提交中。
-- 当一组变更包含多个类型或多个功能范围时，拆成多次提交。
-- 不要使用 `--no-verify` 绕过检查。
-- 不要重写其他协作者已经基于其工作的共享历史。
+- Only create commits when explicitly asked by a user or maintainer.
+- Do not commit automatically after making changes.
+- Each commit must express one logical, testable change.
+- Do not mix unrelated features, fixes, refactors, tests, or documentation
+  changes in the same commit.
+- When a set of changes contains multiple types or functional scopes, split it
+  into multiple commits.
+- Do not bypass checks with `--no-verify`.
+- Do not rewrite shared history that other contributors may have based work on.
 
-## 分支命名
+## Branch Names
 
-推荐使用以下格式：
+Use clear topic branches such as:
 
 - `codex/<topic>`
 - `feature/<topic>`
 - `fix/<topic>`
 - `docs/<topic>`
 
-`<topic>` 使用简短、清晰的英文 kebab-case，例如 `codex/git-rules`、`fix/login-timeout`。
+Write `<topic>` in short, descriptive English kebab-case, for example
+`codex/git-rules` or `fix/login-timeout`.
 
-## 提交信息格式
+## Commit Message Format
 
-使用 Conventional Commits：
+Use Conventional Commits:
 
 ```text
 <type>(<scope>): <subject>
 ```
 
-如果是仓库级别变更，可以省略 `scope`：
+Omit `scope` for repo-wide changes:
 
 ```text
 <type>: <subject>
@@ -38,40 +43,41 @@
 
 ### type
 
-推荐类型：
+Recommended types:
 
-- `feat`: 新功能或新增能力
-- `fix`: 缺陷修复
-- `refactor`: 不改变外部行为的重构
-- `test`: 测试新增或修改
-- `docs`: 文档变更
-- `chore`: 构建、配置、依赖、维护类变更
-- `perf`: 性能优化
+- `feat`: a new feature or capability
+- `fix`: a bug fix
+- `refactor`: an internal change that does not alter external behavior
+- `test`: new or updated tests
+- `docs`: documentation changes
+- `chore`: build, configuration, dependency, or maintenance changes
+- `perf`: a performance improvement
 
-一个提交只使用一种 `type`。如果同一批改动同时包含功能、文档和重构，应拆成多个提交。
+Use only one `type` per commit. If a batch of work contains a feature, a docs
+update, and a refactor, split it into separate commits.
 
 ### scope
 
-`scope` 表示受影响的区域，例如：
+`scope` identifies the affected area, for example:
 
-- 算法或功能名：`grpo`、`opd`
-- 共享库：`rl_common`
-- 子模块：`rl_common/trainer`
-- 产品或流程模块：`generation`、`runner`、`verification`
+- an algorithm or feature name: `grpo`, `opd`
+- a shared library: `rl_common`
+- a submodule: `rl_common/trainer`
+- a product or workflow module: `generation`, `runner`, `verification`
 
-如果变更影响整个仓库，可以省略 `scope`。
+Omit `scope` when the change affects the whole repository.
 
 ### subject
 
-`subject` 应满足：
+Write `subject` in:
 
-- 使用英文
-- 使用祈使语气
-- 小写开头
-- 不以句号结尾
-- 尽量不超过 72 个字符
+- English
+- imperative mood
+- lowercase
+- no trailing period
+- 72 characters or fewer when practical
 
-示例：
+Examples:
 
 ```text
 feat(grpo): add group-relative advantage loss
@@ -82,63 +88,72 @@ docs(architecture): explain environment boundary
 docs: add git commit rules
 ```
 
-## 提交正文
+## Commit Body
 
-对行为变化、数据格式变化或兼容性风险较高的提交，建议在提交正文说明：
+For behavioral changes, data format changes, or compatibility-sensitive changes,
+explain the following in the commit body:
 
-- 变更动机
-- 主要实现思路
-- 数据、Schema 或导出格式影响
-- 兼容性影响
-- 验证方式和测试结果
-- 可能的回滚方式
+- motivation
+- implementation approach
+- data, schema, or export format impact
+- compatibility impact
+- verification method and test results
+- rollback plan
 
-## 暂存规则
+## Staging Rules
 
-- 使用显式路径暂存文件，例如 `git add README.md`。
-- 不要使用 `git add -A` 或 `git add .`。
-- 提交前先查看 `git status --short` 和 `git diff --cached`。
-- 不要暂存本地实验脚本、临时输出、模型文件、数据集、密钥或缓存文件。
+- Stage files by explicit path, for example `git add README.md`.
+- Do not use `git add -A` or `git add .`.
+- Before committing, inspect `git status --short` and `git diff --cached`.
+- Do not stage local experiment scripts, temporary outputs, model files,
+  datasets, secrets, or cache files.
 
-禁止提交：
+Never commit:
 
-- `.env`、API keys、tokens、凭证文件
-- `runs/`、`outputs/`、`checkpoints/`
-- `models/`、`datasets/`、模型权重、未授权数据
-- `__pycache__/`、`.pytest_cache/`、构建缓存
-- 大型生成产物或一次性 smoke-test 输出
+- `.env`, API keys, tokens, or credential files
+- `runs/`, `outputs/`, or `checkpoints/`
+- `models/`, `datasets/`, model weights, or unlicensed data
+- `__pycache__/`, `.pytest_cache/`, or build caches
+- large generated artifacts or one-off smoke-test outputs
 
-## 验证规则
+## Verification Rules
 
-提交前应完成与变更范围匹配的验证：
+Before committing, run verification that matches the scope of the change:
 
-- 文档变更：检查格式、链接和示例命令是否正确。
-- 代码变更：确保导入可解析，相关单元测试或离线 smoke test 通过。
-- 行为变更：补充或更新测试，并记录关键验证结果。
-- 数据或 Schema 变更：说明迁移、兼容性和回滚方案。
+- Documentation changes: check formatting, links, and example commands.
+- Code changes: ensure imports resolve and relevant unit tests or offline smoke
+  tests pass.
+- Behavioral changes: add or update tests and record the key verification
+  results.
+- Data or schema changes: explain migration, compatibility, and rollback
+  behavior.
 
-如果无法运行某项检查，应在提交说明、PR 描述或交付说明中明确说明原因。
+If a check cannot be run, state the reason in the commit body, pull request
+description, or delivery note.
 
-## 推送规则
+## Push Rules
 
-- 完成用户或维护者要求的本地提交后，推送到配置好的远端。
-- 如果用户明确要求只保留本地提交，或仓库没有可用远端，则不要推送。
-- 推送前确认当前分支和远端目标正确。
+- After completing user-requested or maintainer-requested local commits, push
+  them to the configured remote.
+- Do not push if the user explicitly asks to keep commits local or if no remote
+  is available.
+- Before pushing, confirm that the current branch and remote target are correct.
 
-## Pull Request 规则
+## Pull Request Rules
 
-PR 描述应覆盖：
+Pull request descriptions should cover:
 
-- 问题背景
-- 解决方案
-- 数据、Schema 或兼容性影响
-- 测试结果
-- 成本、安全或隐私影响
-- 回滚计划
+- problem background
+- solution
+- data, schema, or compatibility impact
+- test results
+- cost, safety, or privacy impact
+- rollback plan
 
-PR 应保持聚焦。不要把多个不相关主题放进同一个 PR。
+Keep pull requests focused. Do not combine unrelated topics in a single pull
+request.
 
-## 推荐工作流
+## Recommended Workflow
 
 ```bash
 git status --short
